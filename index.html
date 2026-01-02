@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VEX Push Back Scout</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 700px;
+    width: 100%;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    color: #38bdf8;
+  }
+
+  input, button, select {
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+  }
+
+  input, select {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+
+  button {
+    background: #38bdf8;
+    color: #0f172a;
+    font-weight: bold;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background: #0ea5e9;
+  }
+
+  .card {
+    margin-top: 25px;
+    padding: 25px;
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    transition: transform 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+  }
+
+  a {
+    color: #38bdf8;
+    text-decoration: none;
+  }
+
+  label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+  }
+
+  #savedMsg {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>VEX Push Back Team Scout</h1>
+  <input id="team" placeholder="Enter team number (e.g., 95070C)">
+  <button id="searchBtn">Search</button>
+
+  <div id="results"></div>
+</div>
+
+<script>
+const teamsData = {};
+
+function renderTeamCard(team) {
+  const data = teamsData[team] || { wins: 0, losses: 0, partners: '', auton: '' };
+  const resultsDiv = document.getElementById("results");
+
+  const robotEventsLink = `https://www.robotevents.com/teams/V5RC/${team}`;
+  const youtubeRobotSearch = `https://www.youtube.com/results?search_query=${team}+VEX+robot`;
+  const youtubeInterviewSearch = `https://www.youtube.com/results?search_query=${team}+VEX+interview`;
+
+  resultsDiv.innerHTML = `
+    <div class="card">
+      <h2>Team ${team}</h2>
+      <p><a target="_blank" href="${robotEventsLink}">Robot Events page</a></p>
+      <p><a target="_blank" href="${youtubeRobotSearch}">YouTube robot videos</a></p>
+      <p><a target="_blank" href="${youtubeInterviewSearch}">YouTube interviews</a></p>
+
+      <label>Wins:</label>
+      <input type="number" id="wins" value="${data.wins}" min="0">
+
+      <label>Losses:</label>
+      <input type="number" id="losses" value="${data.losses}" min="0">
+
+      <label>Top Alliance Partners (comma separated):</label>
+      <input type="text" id="partners" value="${data.partners}">
+
+      <label>Auton Type:</label>
+      <select id="auton">
+        <option value="">Select</option>
+        <option value="7+wing" ${data.auton==='7+wing'?'selected':''}>7+wing</option>
+        <option value="4+3 wing" ${data.auton==='4+3 wing'?'selected':''}>4+3 wing</option>
+        <option value="6+1 wing" ${data.auton==='6+1 wing'?'selected':''}>6+1 wing</option>
+        <option value="AWP" ${data.auton==='AWP'?'selected':''}>AWP</option>
+      </select>
+
+      <button id="saveBtn">Save Stats</button>
+      <p id="savedMsg" style="color:#10b981;"></p>
+    </div>
+  `;
+
+  document.getElementById("saveBtn").addEventListener("click", () => {
+    teamsData[team] = {
+      wins: parseInt(document.getElementById("wins").value) || 0,
+      losses: parseInt(document.getElementById("losses").value) || 0,
+      partners: document.getElementById("partners").value,
+      auton: document.getElementById("auton").value
+    };
+    document.getElementById("savedMsg").innerText = "Stats saved!";
+  });
+}
+
+document.getElementById("searchBtn").addEventListener("click", () => {
+  const team = document.getElementById("team").value.trim().toUpperCase();
+  if (!team) return;
+  renderTeamCard(team);
+});
+</script>
+
+</body>
+</html>
